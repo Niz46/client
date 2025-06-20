@@ -214,7 +214,7 @@ const EmailPage: React.FC = () => {
               className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
               disabled={isSubmitting}
             >
-              <span>{isSubmitting ? '⌛ Sending…' : '📤 Send Message'}</span>
+              <span>{isSubmitting ? "⌛ Sending…" : "📤 Send Message"}</span>
             </Button>
           </div>
         </form>
