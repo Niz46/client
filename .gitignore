@@ -1,0 +1,60 @@
+node_modules
+# Node.js dependencies
+node_modules/
+
+# Next.js build output
+/.next/
+/out/
+
+# Production build (if used)
+build/
+
+# Static export
+/dist/
+
+# Local environment files
+.env*
+!.env.example
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Diagnostic reports (Node.js)
+report.[0-9]*.[0-9]*.[0-9]*
+
+# Vercel
+.vercel/
+
+# IDE/editor directories and files
+.vscode/
+.idea/
+
+# MacOS
+.DS_Store
+
+# Linux
+*~
+
+# Coverage directories
+coverage/
+
+# ESLint cache
+.eslintcache
+
+# Next.js telemetry
+.next/telemetry.json
+
+# Yarn integrity file
+.yarn-integrity
+
+# Temporary directories
+tmp/
+
+# Optional npm cache directory
+.npm/
+
+# Turbo
+.turbo/
