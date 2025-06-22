@@ -1,37 +1,37 @@
-// File: src/components/DownloadReceiptButton.tsx
+// File: src/components/DownloadAgreementButton.tsx
 "use client";
 
 import React from "react";
-import { ArrowDownToLineIcon } from "lucide-react";
+import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { downloadFile } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface Props {
-  paymentId: number;
+  leaseId: number;
 }
 
-export const DownloadReceiptButton: React.FC<Props> = ({ paymentId }) => {
+export const DownloadAgreementButton: React.FC<Props> = ({ leaseId }) => {
   const handleClick = async () => {
-    toast(`Downloading receipt #${paymentId}…`);
+    toast(`Downloading agreement #${leaseId}…`);
     try {
       await downloadFile(
-        `/payments/${paymentId}/receipt`,
-        `receipt_${paymentId}.pdf`
+        `/leases/${leaseId}/agreement`,
+        `lease_agreement_${leaseId}.pdf`
       );
-      toast.success("Receipt downloaded!");
+      toast("Agreement downloaded!");
     } catch {
-      toast.error("Failed to download receipt.");
+      toast("Failed to download agreement.");
     }
   };
 
   return (
     <Button
       onClick={handleClick}
-      className="border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex items-center justify-center font-semibold hover:bg-primary-700 hover:text-white transition"
+      className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex items-center hover:bg-primary-700 hover:text-white transition"
     >
-      <ArrowDownToLineIcon className="w-4 h-4 mr-1" />
-      Download
+      <Download className="w-5 h-5 mr-2" />
+      Download Agreement
     </Button>
   );
 };

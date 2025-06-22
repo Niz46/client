@@ -19,9 +19,9 @@ export const DownloadReceiptButton: React.FC<Props> = ({ paymentId }) => {
         `/payments/${paymentId}/receipt`,
         `receipt_${paymentId}.pdf`
       );
-      toast.success("Receipt downloaded!");
+      toast("Receipt downloaded!");
     } catch {
-      toast.error("Failed to download receipt.");
+      toast("Failed to download receipt.");
     }
   };
 
