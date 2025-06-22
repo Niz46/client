@@ -46,18 +46,28 @@ const SearchPage = () => {
       }}
     >
       <FiltersBar />
-      <div className="flex justify-between flex-1 overflow-hidden gap-3 mb-5">
+      <div
+        className={`
+          h-full
+          flex
+          flex-col-reverse 
+          md:flex-row 
+          justify-between 
+          gap-3
+          mb-5
+        `}
+      >
         <div
-          className={`h-full overflow-auto transition-all duration-300 ease-in-out ${
+          className={`transition-all duration-300 ease-in-out ${
             isFiltersFullOpen
-              ? "w-3/12 opacity-100 visible"
-              : "w-0 opacity-0 invisible"
+              ? "block md:block w-full md:w-3/12 opacity-100 visible"
+              : "w-full md:w-0 md:invisible md:opacity-0 hidden md:block"
           }`}
         >
           <FiltersFull />
         </div>
         <Map />
-        <div className="basis-4/12 overflow-y-auto">
+        <div className="w-full md:basis-4/12 overflow-y-auto">
           <Listings />
         </div>
       </div>

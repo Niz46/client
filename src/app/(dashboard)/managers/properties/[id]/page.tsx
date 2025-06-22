@@ -14,18 +14,24 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { ArrowLeft, Check, ArrowDownToLine } from "lucide-react";
-import { useGetPropertyQuery, useGetPropertyLeasesQuery, useGetPaymentsQuery } from "@/state/api";
+import { ArrowLeft, Check } from "lucide-react";
+import {
+  useGetPropertyQuery,
+  useGetPropertyLeasesQuery,
+  useGetPaymentsQuery,
+} from "@/state/api";
 import { Lease } from "@/types/prismaTypes";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { DownloadAgreementButton } from "@/components/DownloadAgreementButton";
 
 const PropertyTenants = () => {
   const { id } = useParams();
   const propertyId = Number(id);
 
-  const { data: property, isLoading: propLoading } = useGetPropertyQuery(propertyId);
-  const { data: leases, isLoading: leaseLoading } = useGetPropertyLeasesQuery(propertyId);
+  const { data: property, isLoading: propLoading } =
+    useGetPropertyQuery(propertyId);
+  const { data: leases, isLoading: leaseLoading } =
+    useGetPropertyLeasesQuery(propertyId);
 
   if (propLoading || leaseLoading) return <Loading />;
 
@@ -35,16 +41,16 @@ const PropertyTenants = () => {
     const { data: payments = [] } = useGetPaymentsQuery(lease.id);
     const now = new Date();
     const current = payments.find(
-      p =>
+      (p) =>
         new Date(p.dueDate).getMonth() === now.getMonth() &&
         new Date(p.dueDate).getFullYear() === now.getFullYear()
     );
     const status = current?.paymentStatus ?? "Not Paid";
 
     return (
-      <TableRow key={lease.id} className="h-24">
+      <TableRow key={lease.id} className="h-24 flex flex-wrap sm:table-row">
         {/* Investor */}
-        <TableCell>
+        <TableCell className="w-full sm:table-cell">
           <div className="flex items-center space-x-3">
             <Image
               src="/landing-i1.png"
@@ -61,7 +67,7 @@ const PropertyTenants = () => {
         </TableCell>
 
         {/* Lease Period */}
-        <TableCell>
+        <TableCell className="w-full sm:table-cell">
           {new Date(lease.startDate).toLocaleDateString()} –{" "}
           {new Date(lease.endDate).toLocaleDateString()}
         </TableCell>
@@ -70,7 +76,7 @@ const PropertyTenants = () => {
         <TableCell>${lease.rent.toFixed(2)}</TableCell>
 
         {/* Current Month Status */}
-        <TableCell>
+        <TableCell className="w-full sm:table-cell">
           <span
             className={`px-2 py-1 rounded-full text-xs font-semibold ${
               status === "Paid"
@@ -86,14 +92,13 @@ const PropertyTenants = () => {
         </TableCell>
 
         {/* Contact */}
-        <TableCell>{lease.tenant.phoneNumber}</TableCell>
+        <TableCell className="w-full sm:table-cell whitespace-normal">
+          {lease.tenant.phoneNumber}
+        </TableCell>
 
         {/* Action */}
-        <TableCell>
-          <Button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex items-center justify-center hover:bg-primary-700 hover:text-primary-50">
-            <ArrowDownToLine className="w-4 h-4 mr-1" />
-            Download Agreement
-          </Button>
+        <TableCell className="w-full sm:table-cell">
+          {lease.id && <DownloadAgreementButton leaseId={lease.id} />}
         </TableCell>
       </TableRow>
     );
@@ -116,15 +121,19 @@ const PropertyTenants = () => {
       />
 
       <div className="overflow-x-auto mt-6">
-        <Table>
+        <Table className="min-w-full table-auto whitespace-nowrap">
           <TableHeader>
-            <TableRow>
-              <TableHead>Investor</TableHead>
-              <TableHead>Lease Period</TableHead>
-              <TableHead>Monthly Rent</TableHead>
-              <TableHead>Current Month Status</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Action</TableHead>
+            <TableRow className="flex flex-wrap sm:table-row">
+              <TableHead className="w-full sm:table-cell">Investor</TableHead>
+              <TableHead className="">Lease Period</TableHead>
+              <TableHead className="w-full sm:table-cell">
+                Monthly Rent
+              </TableHead>
+              <TableHead className="w-full sm:table-cell">
+                Current Month Status
+              </TableHead>
+              <TableHead className="w-full sm:table-cell">Contact</TableHead>
+              <TableHead className="w-full sm:table-cell">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

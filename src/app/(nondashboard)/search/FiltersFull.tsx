@@ -88,7 +88,7 @@ const FiltersFull = () => {
   if (!isFiltersFullOpen) return null;
 
   return (
-    <div className="bg-white rounded-lg px-4 h-full overflow-auto pb-10">
+    <div className="bg-white rounded-lg px-4 max-h-[75vh] md:h-full overflow-auto pb-10">
       <div className="flex flex-col space-y-6">
         {/* Location */}
         <div>

@@ -258,6 +258,6 @@ body,
   overflow: hidden;
 }
 /* Hide the Google Translate top banner iframe */
-.goog-te-banner-frame.skiptranslate {
-  display: none !important;
+.skiptranslate iframe  {
+  visibility: hidden !important;
 }

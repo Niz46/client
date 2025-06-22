@@ -23,7 +23,7 @@ export const api = createApi({
     prepareHeaders: async (headers) => {
       const session = await fetchAuthSession();
       const { idToken } = session.tokens ?? {};
-      console.log("🛡️ Token from Amplify:", idToken?.toString()?.slice(0, 20));
+      // console.log("🛡️ Token from Amplify:", idToken?.toString()?.slice(0, 20));
       if (idToken) {
         headers.set("Authorization", `Bearer ${idToken}`);
       }

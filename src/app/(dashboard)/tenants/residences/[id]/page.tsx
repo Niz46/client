@@ -165,7 +165,7 @@ const ResidenceCard: React.FC<ResidenceCardProps> = ({
   currentLease,
 }) => {
   const hasLease = Boolean(currentLease);
-   // 1. Track modal open/closed
+  // 1. Track modal open/closed
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 2. Handler to open the modal
@@ -176,6 +176,16 @@ const ResidenceCard: React.FC<ResidenceCardProps> = ({
   // 3. Handler to close the modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleManagerClick = () => {
+    toast(
+      <>
+        <div className="font-semibold">{property.manager.name}</div>
+        <div>{property.manager.email}</div>
+        <div>{property.manager.phoneNumber}</div>
+      </>
+    );
   };
 
   return (
@@ -240,18 +250,24 @@ const ResidenceCard: React.FC<ResidenceCardProps> = ({
           {currentLease?.id && (
             <DownloadAgreementButton leaseId={currentLease.id} />
           )}
-          <Button className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex items-center justify-center hover:bg-primary-700 hover:text-white transition">
+          <Button
+            className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex items-center justify-center hover:bg-primary-700 hover:text-white transition"
+            onClick={handleManagerClick}
+          >
             <User className="w-5 h-5 mr-2" />
             Manager
           </Button>
-          <Button onClick={handleInvestClick} className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex items-center justify-center hover:bg-primary-700 hover:text-white transition">
+          <Button
+            onClick={handleInvestClick}
+            className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex items-center justify-center hover:bg-primary-700 hover:text-white transition"
+          >
             <Download className="w-5 h-5 mr-2" />
             Invest
           </Button>
         </div>
       </div>
 
-       <ApplicationModal
+      <ApplicationModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         propertyId={property.id}

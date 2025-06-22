@@ -9,6 +9,8 @@ import { useGetApplicationsQuery, useGetAuthUserQuery } from "@/state/api";
 import { useGetPropertyQuery } from "@/state/api"; // for fetching property details
 import { CircleCheckBig, Clock, Download, XCircle } from "lucide-react";
 import { Property } from "@/types/prismaTypes";
+import { downloadFile } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 // -----------------------------------------------------------------------------
 // Helper: Format a Date or ISO string as “MMM d, yyyy” (e.g. “Jul 1, 2023”)
@@ -101,7 +103,8 @@ const InvestmentCard: React.FC<InvestmentCardProps> = ({ application }) => {
       <div className="bg-green-100 p-4 text-green-700 rounded-md flex items-center gap-2">
         <CircleCheckBig className="w-5 h-5" />
         Investment approved. You will receive{" "}
-        <span className="font-semibold">{returnAmountStr}</span> on {endDateStr}.
+        <span className="font-semibold">{returnAmountStr}</span> on {endDateStr}
+        .
       </div>
     );
   } else if (status === "Pending") {
@@ -153,15 +156,25 @@ const InvestmentCard: React.FC<InvestmentCardProps> = ({ application }) => {
         {/* Download Receipt Button (only if approved) */}
         {status === "Approved" && (
           <div className="flex justify-end mt-4">
-            <button
-              onClick={() =>
-                toast.success("Your receipt is downloading…")
-              }
+            <Button
+              onClick={async () => {
+                toast("Downloading receipt…");
+                try {
+                  await downloadFile(
+                    `/payments/${application.id}/receipt`,
+                    `receipt_${application.id}.pdf`
+                  );
+                  toast("Receipt downloaded!");
+                } catch (err) {
+                  console.error("Download failed", err);
+                  toast("Failed to download receipt.");
+                }
+              }}
               className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex items-center justify-center hover:bg-primary-700 hover:text-primary-50 transition"
             >
               <Download className="w-5 h-5 mr-2" />
               Download Receipt
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -220,9 +233,6 @@ const Applications: React.FC = () => {
 
   return (
     <>
-      {/* Sonner toaster for toasts */}
-      <Toaster position="top-right" richColors />
-
       <div className="dashboard-container px-6 py-8 space-y-6">
         <Header
           title="My Investments"

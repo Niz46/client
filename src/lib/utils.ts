@@ -1,3 +1,5 @@
+// src/lib/utils.ts
+
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
@@ -81,39 +83,31 @@ export const createNewUserInDatabase = async (
 /**
  * Download any binary file from the API server and prompt the user to save it.
  *
- * @param path      – API path, e.g. "/payments/1/receipt" (no base URL)
+ * @param path      – API path, e.g. "/payments/1/receipt"
  * @param filename  – desired filename (including extension)
  */
-// utils.ts
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL
   ? process.env.NEXT_PUBLIC_API_BASE_URL.replace(/\/$/, "")
   : "";
 
-/**
- * Downloads a file from the API, streaming it to the user.
- */
 export async function downloadFile(path: string, filename: string) {
-  const url = API_BASE ? `${API_BASE}${path}` : path;
-  try {
-    const res = await fetch(url, {
-      credentials: "include",
-      headers: { Accept: "*/*" },
-    });
-    if (!res.ok) {
-      console.error(`Download failed: ${res.status} ${res.statusText}`);
-      throw new Error(`Status ${res.status}`);
-    }
-    const blob = await res.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(blobUrl);
-  } catch (err) {
-    console.error("Download error:", err);
-    throw err;
+  const url = `${API_BASE}${path}`;
+  console.log("⤷ downloadFile:", url);
+  const res = await fetch(url, {
+    credentials: "include",
+    headers: { Accept: "*/*" },
+  });
+  if (!res.ok) {
+    console.error(`Download failed: ${res.status} ${res.statusText}`);
+    throw new Error(`HTTP ${res.status}`);
   }
+  const blob = await res.blob();
+  const blobUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = blobUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(blobUrl);
 }

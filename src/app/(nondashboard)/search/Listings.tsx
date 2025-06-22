@@ -13,6 +13,7 @@ import { Property } from "@/types/prismaTypes";
 import Card from "@/components/Card";
 import React from "react";
 import CardCompact from "@/components/CardCompact";
+import Loading from "@/components/Loading";
 
 interface ListingsProps {
   /** How many properties to show — if undefined, show all */
@@ -58,7 +59,7 @@ const Listings = ({ limit }: ListingsProps) => {
     }
   };
 
-  if (isLoading) return <>Loading...</>;
+  if (isLoading) return <Loading />;
   if (isError || !properties) return <div>Failed to fetch properties</div>;
 
   // If a limit is provided, take the first `limit` items; otherwise use all

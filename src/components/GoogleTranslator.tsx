@@ -25,7 +25,7 @@ export default function GoogleTranslator() {
     <>
       <div
         id="google_translate_element"
-        className="fixed bottom-10 left-11 z-50 h-7 w-7"
+        className="fixed bottom-10 left-11 z-50 h-8 w-8"
       />
       <Script
         id="google-translate"
