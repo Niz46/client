@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
 
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -86,18 +85,23 @@ export const createNewUserInDatabase = async (
  * @param filename  – desired filename (including extension)
  */
 // utils.ts
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL
+  ? process.env.NEXT_PUBLIC_API_BASE_URL.replace(/\/$/, "")
+  : "";
 
+/**
+ * Downloads a file from the API, streaming it to the user.
+ */
 export async function downloadFile(path: string, filename: string) {
-  const url = `${API_BASE}${path}`;      
+  const url = API_BASE ? `${API_BASE}${path}` : path;
   try {
     const res = await fetch(url, {
-      credentials: "include",            // if you rely on cookies
+      credentials: "include",
       headers: { Accept: "*/*" },
     });
     if (!res.ok) {
       console.error(`Download failed: ${res.status} ${res.statusText}`);
-      return;
+      throw new Error(`Status ${res.status}`);
     }
     const blob = await res.blob();
     const blobUrl = URL.createObjectURL(blob);
@@ -110,6 +114,6 @@ export async function downloadFile(path: string, filename: string) {
     URL.revokeObjectURL(blobUrl);
   } catch (err) {
     console.error("Download error:", err);
+    throw err;
   }
 }
-

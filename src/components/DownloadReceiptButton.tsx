@@ -1,21 +1,28 @@
-// src/components/DownloadReceiptButton.tsx
+// File: src/components/DownloadReceiptButton.tsx
 "use client";
 
 import React from "react";
 import { ArrowDownToLineIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { downloadFile } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface Props {
   paymentId: number;
 }
 
 export const DownloadReceiptButton: React.FC<Props> = ({ paymentId }) => {
-  const handleClick = () => {
-    downloadFile(
-      `/payments/${paymentId}/receipt`,
-      `receipt_${paymentId}.pdf`
-    );
+  const handleClick = async () => {
+    toast(`Downloading receipt #${paymentId}…`);
+    try {
+      await downloadFile(
+        `/payments/${paymentId}/receipt`,
+        `receipt_${paymentId}.pdf`
+      );
+      toast.success("Receipt downloaded!");
+    } catch {
+      toast.error("Failed to download receipt.");
+    }
   };
 
   return (
