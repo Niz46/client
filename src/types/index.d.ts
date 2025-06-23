@@ -135,6 +135,13 @@ declare global {
     userInfo: Tenant | Manager;
     userRole: JsonObject | JsonPrimitive | JsonArray;
   }
+  interface Notification {
+    id: number;
+    userId: string;
+    type: "message" | "alert";
+    text: string;
+    createdAt: string;
+  }
 }
 
 export {};

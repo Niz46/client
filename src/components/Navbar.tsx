@@ -6,10 +6,15 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { useGetAuthUserQuery } from "@/state/api";
+import {
+  useGetAuthUserQuery,
+  useGetUserMessagesQuery,
+  useGetUserAlertsQuery,
+} from "@/state/api";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "aws-amplify/auth";
 import { Bell, MessageCircle, Plus, Search, Menu, X } from "lucide-react";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,35 +31,94 @@ const Navbar: React.FC = () => {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Treat URLs containing "/managers" or "/tenants" as dashboard pages
+  // Base CSS for dropdown items
+  const itemClass = "text-sm px-4 py-2 hover:bg-gray-100 cursor-pointer";
+
+  // Only show sidebar toggle on dashboard pages
   const isDashboardPage =
     pathname.includes("/managers") || pathname.includes("/tenants");
+
+  // Fetch in-app messages & alerts, polling every 30 seconds
+  const { data: messages = [], isLoading: msgsLoading } =
+    useGetUserMessagesQuery(undefined, {
+      skip: !authUser,
+      pollingInterval: 30000,
+    });
+  const { data: alerts = [], isLoading: alertsLoading } =
+    useGetUserAlertsQuery(undefined, {
+      skip: !authUser,
+      pollingInterval: 30000,
+    });
 
   const handleSignOut = async () => {
     await signOut();
     window.location.href = "/";
   };
 
+  const handleMessagesClick = () => {
+    if (msgsLoading) {
+      toast.loading("Loading messages…");
+      return;
+    }
+    if (!messages.length) {
+      toast("No new messages");
+      return;
+    }
+    toast(
+      <>
+        <div className="font-semibold mb-1">Messages</div>
+        {messages.map((m) => (
+          <div key={m.id} className="text-sm mb-1">
+            {m.text}
+          </div>
+        ))}
+      </>,
+      { duration: 8000 }
+    );
+  };
+
+  const handleAlertsClick = () => {
+    if (alertsLoading) {
+      toast("Loading notifications…");
+      return;
+    }
+    if (!alerts.length) {
+      toast("No new notifications");
+      return;
+    }
+    toast(
+      <>
+        <div className="font-semibold mb-1">Notifications</div>
+        {alerts.map((a) => (
+          <div key={a.id} className="text-sm mb-1">
+            {a.text}
+          </div>
+        ))}
+      </>,
+      { duration: 8000 }
+    );
+  };
+
   const navLinks = (
     <>
       <Link
         href="/"
-        className="block px-4 py-2 font-medium text-primary-100 hover:text-primary-300"
         onClick={() => setMobileMenuOpen(false)}
+        className="block px-4 py-2 font-medium text-primary-100 hover:text-primary-300"
       >
         Home
       </Link>
       <Link
         href="/about"
-        className="block px-4 py-2 font-medium text-primary-100 hover:text-primary-300"
         onClick={() => setMobileMenuOpen(false)}
+        className="block px-4 py-2 font-medium text-primary-100 hover:text-primary-300"
       >
         About
       </Link>
       <Link
         href="/property"
-        className="block px-4 py-2 font-medium text-primary-100 hover:text-primary-300"
         onClick={() => setMobileMenuOpen(false)}
+        className="block px-4 py-2 font-medium text-primary-100 hover:text-primary-300"
       >
         Properties
       </Link>
@@ -67,17 +131,18 @@ const Navbar: React.FC = () => {
       style={{ height: `${NAVBAR_HEIGHT}px` }}
     >
       <div className="flex items-center h-full px-4 md:px-8">
-        {/* ─── LEFT SECTION ─── */}
+        {/* LEFT */}
         <div className="flex items-center gap-4 md:gap-6">
-          {/* Sidebar toggle (mobile) only on dashboard pages */}
           {isDashboardPage && (
             <div className="md:hidden">
               <SidebarTrigger />
             </div>
           )}
-
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 hover:text-primary-300" scroll={false}>
+          <Link
+            href="/"
+            scroll={false}
+            className="flex items-center gap-3 hover:text-primary-300"
+          >
             <Image
               src="/logo.svg"
               alt="Miles Home Logo"
@@ -92,8 +157,6 @@ const Navbar: React.FC = () => {
               </span>
             </div>
           </Link>
-
-          {/* “Add New Property” / “Search Properties” */}
           {isDashboardPage && authUser && (
             <Button
               variant="secondary"
@@ -109,49 +172,124 @@ const Navbar: React.FC = () => {
               {authUser.userRole?.toLowerCase() === "manager" ? (
                 <>
                   <Plus className="h-4 w-4" />
-                  <span className="ml-2 hidden md:inline">Add New Property</span>
+                  <span className="ml-2 hidden md:inline">
+                    Add New Property
+                  </span>
                 </>
               ) : (
                 <>
                   <Search className="h-4 w-4" />
-                  <span className="ml-2 hidden md:inline">Search Properties</span>
+                  <span className="ml-2 hidden md:inline">
+                    Search Properties
+                  </span>
                 </>
               )}
             </Button>
           )}
         </div>
 
-        {/* ─── CENTER SECTION (desktop nav) ─── */}
+        {/* CENTER */}
         {!isDashboardPage && (
           <nav className="hidden md:flex flex-1 justify-center gap-8">
             {navLinks}
           </nav>
         )}
 
-        {/* ─── RIGHT SECTION ─── */}
+        {/* RIGHT */}
         <div className="flex items-center gap-5 ml-auto">
-          {/* Mobile menu toggle (only on public pages) */}
           {!isDashboardPage && (
             <button
               className="block md:hidden p-2"
-              onClick={() => setMobileMenuOpen((open) => !open)}
-              aria-label="Toggle navigation menu"
+              onClick={() => setMobileMenuOpen((o) => !o)}
+              aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           )}
 
           {authUser ? (
             <>
-              {/* Messages & Notifications (desktop only) */}
-              <div className="relative hidden md:block">
-                <MessageCircle className="w-6 h-6 cursor-pointer text-primary-200 hover:text-primary-400" />
-                <span className="absolute top-0 right-0 w-2 h-2 bg-secondary-700 rounded-full" />
-              </div>
-              <div className="relative hidden md:block">
-                <Bell className="w-6 h-6 cursor-pointer text-primary-200 hover:text-primary-400" />
-                <span className="absolute top-0 right-0 w-2 h-2 bg-secondary-700 rounded-full" />
-              </div>
+              {/* Messages Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="relative hidden md:block">
+                  <MessageCircle className="w-6 h-6 cursor-pointer text-primary-200 hover:text-primary-400" />
+                  {messages.length > 0 && (
+                    <span className="absolute top-0 right-0 w-2 h-2 bg-secondary-700 rounded-full" />
+                  )}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64 bg-white text-gray-900 shadow-lg">
+                  <div className="px-4 py-2 font-semibold">Messages</div>
+                  <hr />
+                  {msgsLoading ? (
+                    <div className={itemClass}>Loading…</div>
+                  ) : messages.length ? (
+                    messages.map((m) => (
+                      <DropdownMenuItem key={m.id} className={itemClass}>
+                        {m.text}
+                      </DropdownMenuItem>
+                    ))
+                  ) : (
+                    <div className={itemClass}>No new messages</div>
+                  )}
+                  <hr />
+                  <DropdownMenuItem
+                    className={itemClass}
+                    onClick={handleMessagesClick}
+                  >
+                    Show messages in toast
+                  </DropdownMenuItem>
+                  <hr />
+                  <DropdownMenuItem
+                    className={`${itemClass} text-center text-sm text-primary-600`}
+                    onClick={() => router.push("/messages/history")}
+                  >
+                    View all
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Notifications Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="relative hidden md:block">
+                  <Bell className="w-6 h-6 cursor-pointer text-primary-200 hover:text-primary-400" />
+                  {alerts.length > 0 && (
+                    <span className="absolute top-0 right-0 w-2 h-2 bg-secondary-700 rounded-full" />
+                  )}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64 bg-white text-gray-900 shadow-lg">
+                  <div className="px-4 py-2 font-semibold">Notifications</div>
+                  <hr />
+                  {alertsLoading ? (
+                    <div className={itemClass}>Loading…</div>
+                  ) : alerts.length ? (
+                    alerts.map((a) => (
+                      <DropdownMenuItem key={a.id} className={itemClass}>
+                        {a.text}
+                      </DropdownMenuItem>
+                    ))
+                  ) : (
+                    <div className={itemClass}>No new notifications</div>
+                  )}
+                  <hr />
+                  <DropdownMenuItem
+                    className={itemClass}
+                    onClick={handleAlertsClick}
+                  >
+                    Show notifications in toast
+                  </DropdownMenuItem>
+                  <hr />
+                  <DropdownMenuItem
+                    className={`${itemClass} text-center text-sm text-primary-600`}
+                    onClick={() => router.push("/notifications/history")}
+                  >
+                    View all
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Profile Dropdown */}
               <DropdownMenu>
@@ -226,12 +364,10 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* ─── MOBILE NAVIGATION (only on public pages) ─── */}
+      {/* MOBILE NAV */}
       {!isDashboardPage && mobileMenuOpen && (
         <nav className="md:hidden bg-primary-700 text-white border-t border-primary-600">
-          <div className="flex flex-col px-4 py-2 space-y-1">
-            {navLinks}
-          </div>
+          <div className="flex flex-col px-4 py-2 space-y-1">{navLinks}</div>
         </nav>
       )}
     </header>
