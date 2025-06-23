@@ -44,11 +44,13 @@ const Navbar: React.FC = () => {
       skip: !authUser,
       pollingInterval: 30000,
     });
-  const { data: alerts = [], isLoading: alertsLoading } =
-    useGetUserAlertsQuery(undefined, {
+  const { data: alerts = [], isLoading: alertsLoading } = useGetUserAlertsQuery(
+    undefined,
+    {
       skip: !authUser,
       pollingInterval: 30000,
-    });
+    }
+  );
 
   const handleSignOut = async () => {
     await signOut();
