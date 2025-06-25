@@ -4373,6 +4373,7 @@ export namespace Prisma {
     name: string | null
     email: string | null
     phoneNumber: string | null
+    isSuspended: boolean | null
   }
 
   export type TenantMaxAggregateOutputType = {
@@ -4381,6 +4382,7 @@ export namespace Prisma {
     name: string | null
     email: string | null
     phoneNumber: string | null
+    isSuspended: boolean | null
   }
 
   export type TenantCountAggregateOutputType = {
@@ -4389,6 +4391,7 @@ export namespace Prisma {
     name: number
     email: number
     phoneNumber: number
+    isSuspended: number
     _all: number
   }
 
@@ -4407,6 +4410,7 @@ export namespace Prisma {
     name?: true
     email?: true
     phoneNumber?: true
+    isSuspended?: true
   }
 
   export type TenantMaxAggregateInputType = {
@@ -4415,6 +4419,7 @@ export namespace Prisma {
     name?: true
     email?: true
     phoneNumber?: true
+    isSuspended?: true
   }
 
   export type TenantCountAggregateInputType = {
@@ -4423,6 +4428,7 @@ export namespace Prisma {
     name?: true
     email?: true
     phoneNumber?: true
+    isSuspended?: true
     _all?: true
   }
 
@@ -4518,6 +4524,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended: boolean
     _count: TenantCountAggregateOutputType | null
     _avg: TenantAvgAggregateOutputType | null
     _sum: TenantSumAggregateOutputType | null
@@ -4545,6 +4552,7 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     phoneNumber?: boolean
+    isSuspended?: boolean
     properties?: boolean | Tenant$propertiesArgs<ExtArgs>
     favorites?: boolean | Tenant$favoritesArgs<ExtArgs>
     applications?: boolean | Tenant$applicationsArgs<ExtArgs>
@@ -4558,6 +4566,7 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     phoneNumber?: boolean
+    isSuspended?: boolean
   }, ExtArgs["result"]["tenant"]>
 
   export type TenantSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4566,6 +4575,7 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     phoneNumber?: boolean
+    isSuspended?: boolean
   }, ExtArgs["result"]["tenant"]>
 
   export type TenantSelectScalar = {
@@ -4574,9 +4584,10 @@ export namespace Prisma {
     name?: boolean
     email?: boolean
     phoneNumber?: boolean
+    isSuspended?: boolean
   }
 
-  export type TenantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cognitoId" | "name" | "email" | "phoneNumber", ExtArgs["result"]["tenant"]>
+  export type TenantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "cognitoId" | "name" | "email" | "phoneNumber" | "isSuspended", ExtArgs["result"]["tenant"]>
   export type TenantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     properties?: boolean | Tenant$propertiesArgs<ExtArgs>
     favorites?: boolean | Tenant$favoritesArgs<ExtArgs>
@@ -4601,6 +4612,7 @@ export namespace Prisma {
       name: string
       email: string
       phoneNumber: string
+      isSuspended: boolean
     }, ExtArgs["result"]["tenant"]>
     composites: {}
   }
@@ -5033,6 +5045,7 @@ export namespace Prisma {
     readonly name: FieldRef<"Tenant", 'String'>
     readonly email: FieldRef<"Tenant", 'String'>
     readonly phoneNumber: FieldRef<"Tenant", 'String'>
+    readonly isSuspended: FieldRef<"Tenant", 'Boolean'>
   }
     
 
@@ -11122,7 +11135,8 @@ export namespace Prisma {
     cognitoId: 'cognitoId',
     name: 'name',
     email: 'email',
-    phoneNumber: 'phoneNumber'
+    phoneNumber: 'phoneNumber',
+    isSuspended: 'isSuspended'
   };
 
   export type TenantScalarFieldEnum = (typeof TenantScalarFieldEnum)[keyof typeof TenantScalarFieldEnum]
@@ -11573,6 +11587,7 @@ export namespace Prisma {
     name?: StringFilter<"Tenant"> | string
     email?: StringFilter<"Tenant"> | string
     phoneNumber?: StringFilter<"Tenant"> | string
+    isSuspended?: BoolFilter<"Tenant"> | boolean
     properties?: PropertyListRelationFilter
     favorites?: PropertyListRelationFilter
     applications?: ApplicationListRelationFilter
@@ -11585,6 +11600,7 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     phoneNumber?: SortOrder
+    isSuspended?: SortOrder
     properties?: PropertyOrderByRelationAggregateInput
     favorites?: PropertyOrderByRelationAggregateInput
     applications?: ApplicationOrderByRelationAggregateInput
@@ -11600,6 +11616,7 @@ export namespace Prisma {
     name?: StringFilter<"Tenant"> | string
     email?: StringFilter<"Tenant"> | string
     phoneNumber?: StringFilter<"Tenant"> | string
+    isSuspended?: BoolFilter<"Tenant"> | boolean
     properties?: PropertyListRelationFilter
     favorites?: PropertyListRelationFilter
     applications?: ApplicationListRelationFilter
@@ -11612,6 +11629,7 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     phoneNumber?: SortOrder
+    isSuspended?: SortOrder
     _count?: TenantCountOrderByAggregateInput
     _avg?: TenantAvgOrderByAggregateInput
     _max?: TenantMaxOrderByAggregateInput
@@ -11628,6 +11646,7 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Tenant"> | string
     email?: StringWithAggregatesFilter<"Tenant"> | string
     phoneNumber?: StringWithAggregatesFilter<"Tenant"> | string
+    isSuspended?: BoolWithAggregatesFilter<"Tenant"> | boolean
   }
 
   export type LocationWhereInput = {
@@ -12221,6 +12240,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
     properties?: PropertyCreateNestedManyWithoutTenantsInput
     favorites?: PropertyCreateNestedManyWithoutFavoritedByInput
     applications?: ApplicationCreateNestedManyWithoutTenantInput
@@ -12233,6 +12253,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
     properties?: PropertyUncheckedCreateNestedManyWithoutTenantsInput
     favorites?: PropertyUncheckedCreateNestedManyWithoutFavoritedByInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutTenantInput
@@ -12244,6 +12265,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
     properties?: PropertyUpdateManyWithoutTenantsNestedInput
     favorites?: PropertyUpdateManyWithoutFavoritedByNestedInput
     applications?: ApplicationUpdateManyWithoutTenantNestedInput
@@ -12256,6 +12278,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
     properties?: PropertyUncheckedUpdateManyWithoutTenantsNestedInput
     favorites?: PropertyUncheckedUpdateManyWithoutFavoritedByNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutTenantNestedInput
@@ -12268,6 +12291,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
   }
 
   export type TenantUpdateManyMutationInput = {
@@ -12275,6 +12299,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type TenantUncheckedUpdateManyInput = {
@@ -12283,6 +12308,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type LocationUpdateInput = {
@@ -13014,6 +13040,7 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     phoneNumber?: SortOrder
+    isSuspended?: SortOrder
   }
 
   export type TenantAvgOrderByAggregateInput = {
@@ -13026,6 +13053,7 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     phoneNumber?: SortOrder
+    isSuspended?: SortOrder
   }
 
   export type TenantMinOrderByAggregateInput = {
@@ -13034,6 +13062,7 @@ export namespace Prisma {
     name?: SortOrder
     email?: SortOrder
     phoneNumber?: SortOrder
+    isSuspended?: SortOrder
   }
 
   export type TenantSumOrderByAggregateInput = {
@@ -14364,6 +14393,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
     properties?: PropertyCreateNestedManyWithoutTenantsInput
     applications?: ApplicationCreateNestedManyWithoutTenantInput
     leases?: LeaseCreateNestedManyWithoutTenantInput
@@ -14375,6 +14405,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
     properties?: PropertyUncheckedCreateNestedManyWithoutTenantsInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutTenantInput
     leases?: LeaseUncheckedCreateNestedManyWithoutTenantInput
@@ -14390,6 +14421,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
     favorites?: PropertyCreateNestedManyWithoutFavoritedByInput
     applications?: ApplicationCreateNestedManyWithoutTenantInput
     leases?: LeaseCreateNestedManyWithoutTenantInput
@@ -14401,6 +14433,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
     favorites?: PropertyUncheckedCreateNestedManyWithoutFavoritedByInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutTenantInput
     leases?: LeaseUncheckedCreateNestedManyWithoutTenantInput
@@ -14546,6 +14579,7 @@ export namespace Prisma {
     name?: StringFilter<"Tenant"> | string
     email?: StringFilter<"Tenant"> | string
     phoneNumber?: StringFilter<"Tenant"> | string
+    isSuspended?: BoolFilter<"Tenant"> | boolean
   }
 
   export type TenantUpsertWithWhereUniqueWithoutPropertiesInput = {
@@ -15047,6 +15081,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
     properties?: PropertyCreateNestedManyWithoutTenantsInput
     favorites?: PropertyCreateNestedManyWithoutFavoritedByInput
     leases?: LeaseCreateNestedManyWithoutTenantInput
@@ -15058,6 +15093,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
     properties?: PropertyUncheckedCreateNestedManyWithoutTenantsInput
     favorites?: PropertyUncheckedCreateNestedManyWithoutFavoritedByInput
     leases?: LeaseUncheckedCreateNestedManyWithoutTenantInput
@@ -15174,6 +15210,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
     properties?: PropertyUpdateManyWithoutTenantsNestedInput
     favorites?: PropertyUpdateManyWithoutFavoritedByNestedInput
     leases?: LeaseUpdateManyWithoutTenantNestedInput
@@ -15185,6 +15222,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
     properties?: PropertyUncheckedUpdateManyWithoutTenantsNestedInput
     favorites?: PropertyUncheckedUpdateManyWithoutFavoritedByNestedInput
     leases?: LeaseUncheckedUpdateManyWithoutTenantNestedInput
@@ -15285,6 +15323,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
     properties?: PropertyCreateNestedManyWithoutTenantsInput
     favorites?: PropertyCreateNestedManyWithoutFavoritedByInput
     applications?: ApplicationCreateNestedManyWithoutTenantInput
@@ -15296,6 +15335,7 @@ export namespace Prisma {
     name: string
     email: string
     phoneNumber: string
+    isSuspended?: boolean
     properties?: PropertyUncheckedCreateNestedManyWithoutTenantsInput
     favorites?: PropertyUncheckedCreateNestedManyWithoutFavoritedByInput
     applications?: ApplicationUncheckedCreateNestedManyWithoutTenantInput
@@ -15441,6 +15481,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
     properties?: PropertyUpdateManyWithoutTenantsNestedInput
     favorites?: PropertyUpdateManyWithoutFavoritedByNestedInput
     applications?: ApplicationUpdateManyWithoutTenantNestedInput
@@ -15452,6 +15493,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
     properties?: PropertyUncheckedUpdateManyWithoutTenantsNestedInput
     favorites?: PropertyUncheckedUpdateManyWithoutFavoritedByNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutTenantNestedInput
@@ -15678,6 +15720,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
     properties?: PropertyUpdateManyWithoutTenantsNestedInput
     applications?: ApplicationUpdateManyWithoutTenantNestedInput
     leases?: LeaseUpdateManyWithoutTenantNestedInput
@@ -15689,6 +15732,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
     properties?: PropertyUncheckedUpdateManyWithoutTenantsNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutTenantNestedInput
     leases?: LeaseUncheckedUpdateManyWithoutTenantNestedInput
@@ -15700,6 +15744,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type TenantUpdateWithoutPropertiesInput = {
@@ -15707,6 +15752,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
     favorites?: PropertyUpdateManyWithoutFavoritedByNestedInput
     applications?: ApplicationUpdateManyWithoutTenantNestedInput
     leases?: LeaseUpdateManyWithoutTenantNestedInput
@@ -15718,6 +15764,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
     favorites?: PropertyUncheckedUpdateManyWithoutFavoritedByNestedInput
     applications?: ApplicationUncheckedUpdateManyWithoutTenantNestedInput
     leases?: LeaseUncheckedUpdateManyWithoutTenantNestedInput
@@ -15729,6 +15776,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
+    isSuspended?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type PropertyCreateManyManagerInput = {

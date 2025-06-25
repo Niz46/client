@@ -169,7 +169,7 @@ export const api = createApi({
 
     updateTenantSettings: build.mutation<
       Tenant,
-      { cognitoId: string } & Partial<Tenant>
+      { cognitoId: string; isSuspended: boolean } & Partial<Tenant>
     >({
       query: ({ cognitoId, ...updates }) => ({
         url: `tenants/${cognitoId}`,
@@ -239,6 +239,47 @@ export const api = createApi({
           error: "Failed to fetch current residences.",
         });
       },
+    }),
+
+    getPropertyGrowthPerDay: build.query<
+      { day: string; count: number }[],
+      void
+    >({
+      async queryFn(_, _queryApi, _extraOptions, fetchWithBQ) {
+        // fetch all properties
+        const res = await fetchWithBQ("properties?limit=10000");
+        if (res.error) return { error: res.error as any };
+        const props = res.data as Property[];
+        // group by postedDate day
+        const map: Record<string, number> = {};
+        props.forEach((p) => {
+          const d = new Date(p.postedDate).toLocaleDateString("en-US", {
+            month: "short", day: "numeric",
+          });
+          map[d] = (map[d]||0) + 1;
+        });
+        const arr = Object.entries(map).map(([day,count]) => ({day, count}));
+        return { data: arr };
+      },
+      providesTags: ["Properties"],
+    }),
+
+    getPropertyCountsByType: build.query<
+      { propertyType: string; count: number }[],
+      void
+    >({
+      async queryFn(_, _queryApi, _extraOptions, fetchWithBQ) {
+        const res = await fetchWithBQ("properties?limit=10000");
+        if (res.error) return { error: res.error as any };
+        const props = res.data as Property[];
+        const map: Record<string, number> = {};
+        props.forEach((p) => {
+          map[p.propertyType] = (map[p.propertyType]||0)+1;
+        });
+        const arr = Object.entries(map).map(([propertyType,count])=>({propertyType,count}));
+        return { data: arr };
+      },
+      providesTags: ["Properties"],
     }),
 
     /* Manager Endpoints */
@@ -453,6 +494,8 @@ export const {
   useGetPropertiesQuery,
   useGetAllTenantsQuery,
   useGetPropertyQuery,
+  useGetPropertyGrowthPerDayQuery,
+  useGetPropertyCountsByTypeQuery,
   useCreatePropertyMutation,
   useGetTenantQuery,
   useGetUserMessagesQuery,

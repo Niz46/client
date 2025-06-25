@@ -31,7 +31,8 @@
       "./src/types"
     ],
     "types": [],
-    "target": "ES2017"
+    "target": "ES2017",
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "**/*.ts",

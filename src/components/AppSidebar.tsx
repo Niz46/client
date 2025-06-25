@@ -16,12 +16,14 @@ import {
   Home,
   Menu,
   Settings,
+  User,
   Send,
   X,
 } from "lucide-react";
 import { NAVBAR_HEIGHT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 const AppSidebar = ({ userType }: AppSidebarProps) => {
   const pathname = usePathname();
@@ -30,7 +32,9 @@ const AppSidebar = ({ userType }: AppSidebarProps) => {
   const navLinks =
     userType === "manager"
       ? [
+          { icon: Home, label: "Dashboard", href: "/managers/dashboard" },
           { icon: Building, label: "Properties", href: "/managers/properties" },
+          { icon: User, label: "Users", href: "/managers/users" },
           {
             icon: FileText,
             label: "Applications",
@@ -71,22 +75,22 @@ const AppSidebar = ({ userType }: AppSidebarProps) => {
               {open ? (
                 <>
                   <h1 className="text-xl font-bold text-gray-800">
-                    {userType === "manager" ? "Manager View" : "Renter View"}
+                    {userType === "manager" ? "Admin View" : "Investors View"}
                   </h1>
-                  <button
+                  <Button
                     className="hover:bg-gray-100 p-2 rounded-md"
                     onClick={() => toggleSidebar()}
                   >
                     <X className="h-6 w-6 text-gray-600" />
-                  </button>
+                  </Button>
                 </>
               ) : (
-                <button
+                <Button
                   className="hover:bg-gray-100 p-2 rounded-md"
                   onClick={() => toggleSidebar()}
                 >
                   <Menu className="h-6 w-6 text-gray-600" />
-                </button>
+                </Button>
               )}
             </div>
           </SidebarMenuItem>
