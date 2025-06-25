@@ -1,4 +1,4 @@
-// src/app/(dashboard)/managers/dashboard/page.tsx
+// File: src/app/(dashboard)/managers/dashboard/page.tsx
 "use client";
 
 import React from "react";
@@ -14,7 +14,8 @@ import Link from "next/link";
 
 export default function AdminDashboard() {
   const { data: authUser, isLoading: authLoading } = useGetAuthUserQuery();
-  const { data: tenants = [], isLoading: usersLoading } = useGetAllTenantsQuery();
+  const { data: tenants = [], isLoading: usersLoading } =
+    useGetAllTenantsQuery();
   const managerId = authUser?.cognitoInfo?.userId ?? "";
   const {
     data: properties = [],
@@ -33,17 +34,22 @@ export default function AdminDashboard() {
   const totalProperties = properties.length;
   const totalApplications = applications.length;
 
-  const statusCounts = applications.reduce<Record<string, number>>((acc, a) => {
-    acc[a.status] = (acc[a.status] || 0) + 1;
-    return acc;
-  }, {});
+  const statusCounts = applications.reduce<Record<string, number>>(
+    (acc, a) => {
+      acc[a.status] = (acc[a.status] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
 
   return (
-    <main className="min-h-scree p-8">
-      <h1 className="text-4xl font-extrabold text-primary-900 mb-8">Admin Dashboard</h1>
+    <main className="min-h-screen bg-gray-50 p-6 md:p-8 space-y-12">
+      <h1 className="text-3xl md:text-4xl font-extrabold text-primary-900">
+        Admin Dashboard
+      </h1>
 
-      {/* ─── Stats ─── */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      {/* ─── STATS CARDS ───────────────────────────────────────────── */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatsCard
           headerTitle="Total Users"
           total={totalUsers}
@@ -64,15 +70,15 @@ export default function AdminDashboard() {
         />
       </section>
 
-      {/* ─── Status Bars ─── */}
-      <section className="bg-white rounded-lg shadow-lg p-6 mb-12">
-        <h2 className="text-2xl font-semibold text-primary-800 mb-4">
+      {/* ─── STATUS BARS ───────────────────────────────────────────── */}
+      <section className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-xl md:text-2xl font-semibold text-primary-800 mb-4">
           Applications by Status
         </h2>
         <div className="space-y-4">
           {Object.entries(statusCounts).map(([status, count]) => {
-            const percent = totalApplications
-              ? (count / totalApplications) * 100
+            const pct = totalApplications
+              ? Math.round((count / totalApplications) * 100)
               : 0;
             return (
               <div key={status}>
@@ -80,25 +86,27 @@ export default function AdminDashboard() {
                   <span className="capitalize font-medium">{status}</span>
                   <span className="font-medium">{count}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-primary-600"
-                    style={{ width: `${percent}%` }}
+                    className="h-full bg-primary-600 transition-all"
+                    style={{ width: `${pct}%` }}
                   />
                 </div>
               </div>
             );
           })}
-          {totalApplications === 0 && (
-            <p className="text-center text-gray-500">No applications yet.</p>
+          {!totalApplications && (
+            <p className="text-center text-gray-500 mt-4">
+              No applications yet.
+            </p>
           )}
         </div>
       </section>
 
-      {/* ─── Latest Properties ─── */}
-      <section className="bg-white rounded-lg shadow-lg p-6 mb-12">
+      {/* ─── LATEST PROPERTIES ─────────────────────────────────────── */}
+      <section className="bg-white rounded-lg shadow p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-primary-800">
+          <h2 className="text-xl md:text-2xl font-semibold text-primary-800">
             Latest Properties
           </h2>
           <Link
@@ -108,16 +116,18 @@ export default function AdminDashboard() {
             View All →
           </Link>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* desktop/tablet table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full table-auto divide-y divide-gray-200">
             <thead className="bg-primary-600">
               <tr>
-                {["Name", "Beds", "Baths", "Price"].map((th) => (
+                {["Name", "Beds", "Baths", "Price"].map((h) => (
                   <th
-                    key={th}
-                    className="px-6 py-3 text-left text-white font-medium uppercase tracking-wider"
+                    key={h}
+                    className="px-6 py-3 text-left text-white font-medium uppercase tracking-wide"
                   >
-                    {th}
+                    {h}
                   </th>
                 ))}
               </tr>
@@ -136,7 +146,7 @@ export default function AdminDashboard() {
                   </td>
                 </tr>
               ))}
-              {properties.length === 0 && (
+              {!properties.length && (
                 <tr>
                   <td
                     colSpan={4}
@@ -149,12 +159,34 @@ export default function AdminDashboard() {
             </tbody>
           </table>
         </div>
+
+        {/* mobile card list */}
+        <div className="space-y-4 md:hidden">
+          {properties.map((p) => (
+            <div
+              key={p.id}
+              className="bg-gray-50 rounded-lg p-4 shadow-sm flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-800">{p.name}</h3>
+              <div className="flex justify-between text-gray-600 text-sm">
+                <span>Beds: {p.beds}</span>
+                <span>Baths: {p.baths}</span>
+              </div>
+              <div className="text-gray-800 font-medium">
+                ${p.pricePerMonth}/mo
+              </div>
+            </div>
+          ))}
+          {!properties.length && (
+            <p className="text-center text-gray-500">No properties found.</p>
+          )}
+        </div>
       </section>
 
-      {/* ─── Latest Applications ─── */}
-      <section className="bg-white rounded-lg shadow-lg p-6">
+      {/* ─── LATEST APPLICATIONS ───────────────────────────────────── */}
+      <section className="bg-white rounded-lg shadow p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-primary-800">
+          <h2 className="text-xl md:text-2xl font-semibold text-primary-800">
             Latest Applications
           </h2>
           <Link
@@ -164,16 +196,18 @@ export default function AdminDashboard() {
             View All →
           </Link>
         </div>
-        <div className="overflow-x-auto">
+
+        {/* desktop/tablet table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="min-w-full table-auto divide-y divide-gray-200">
             <thead className="bg-primary-600">
               <tr>
-                {["Tenant", "Property", "Date", "Status"].map((th) => (
+                {["Tenant", "Property", "Date", "Status"].map((h) => (
                   <th
-                    key={th}
-                    className="px-6 py-3 text-left text-white font-medium uppercase tracking-wider"
+                    key={h}
+                    className="px-6 py-3 text-left text-white font-medium uppercase tracking-wide"
                   >
-                    {th}
+                    {h}
                   </th>
                 ))}
               </tr>
@@ -192,7 +226,7 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4 capitalize">{a.status}</td>
                 </tr>
               ))}
-              {applications.length === 0 && (
+              {!applications.length && (
                 <tr>
                   <td
                     colSpan={4}
@@ -204,6 +238,28 @@ export default function AdminDashboard() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* mobile card list */}
+        <div className="space-y-4 md:hidden">
+          {applications.map((a) => (
+            <div
+              key={a.id}
+              className="bg-gray-50 rounded-lg p-4 shadow-sm flex flex-col gap-2"
+            >
+              <p className="font-semibold text-gray-800">{a.name}</p>
+              <p className="text-gray-600 text-sm">{a.property.name}</p>
+              <p className="text-gray-600 text-sm">
+                {new Date(a.applicationDate).toLocaleDateString()}
+              </p>
+              <span className="inline-block px-2 py-1 text-xs font-semibold bg-secondary-100 text-secondary-800 rounded">
+                {a.status}
+              </span>
+            </div>
+          ))}
+          {!applications.length && (
+            <p className="text-center text-gray-500">No applications found.</p>
+          )}
         </div>
       </section>
     </main>

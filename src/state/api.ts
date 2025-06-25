@@ -169,7 +169,7 @@ export const api = createApi({
 
     updateTenantSettings: build.mutation<
       Tenant,
-      { cognitoId: string; isSuspended: boolean } & Partial<Tenant>
+      { cognitoId: string } & Partial<Tenant>
     >({
       query: ({ cognitoId, ...updates }) => ({
         url: `tenants/${cognitoId}`,
@@ -181,6 +181,25 @@ export const api = createApi({
         await withToast(queryFulfilled, {
           success: "Settings updated successfully!",
           error: "Failed to update settings.",
+        });
+      },
+    }),
+
+    suspendTenant: build.mutation<
+      { cognitoId: string; isSuspended: boolean },
+      { cognitoId: string; isSuspended: boolean }
+    >({
+      query: ({ cognitoId, isSuspended }) => ({
+        url: `tenants/${cognitoId}/suspend`,
+        method: "PUT",
+        body: { isSuspended },
+      }),
+      // invalidate the LIST so getAllTenants auto-refetches
+      invalidatesTags: [{ type: "Tenants", id: "LIST" }],
+      onQueryStarted: async (_, { queryFulfilled }) => {
+        await withToast(queryFulfilled, {
+          success: "User suspension updated",
+          error: "Failed to update user suspension",
         });
       },
     }),
@@ -254,11 +273,12 @@ export const api = createApi({
         const map: Record<string, number> = {};
         props.forEach((p) => {
           const d = new Date(p.postedDate).toLocaleDateString("en-US", {
-            month: "short", day: "numeric",
+            month: "short",
+            day: "numeric",
           });
-          map[d] = (map[d]||0) + 1;
+          map[d] = (map[d] || 0) + 1;
         });
-        const arr = Object.entries(map).map(([day,count]) => ({day, count}));
+        const arr = Object.entries(map).map(([day, count]) => ({ day, count }));
         return { data: arr };
       },
       providesTags: ["Properties"],
@@ -274,9 +294,12 @@ export const api = createApi({
         const props = res.data as Property[];
         const map: Record<string, number> = {};
         props.forEach((p) => {
-          map[p.propertyType] = (map[p.propertyType]||0)+1;
+          map[p.propertyType] = (map[p.propertyType] || 0) + 1;
         });
-        const arr = Object.entries(map).map(([propertyType,count])=>({propertyType,count}));
+        const arr = Object.entries(map).map(([propertyType, count]) => ({
+          propertyType,
+          count,
+        }));
         return { data: arr };
       },
       providesTags: ["Properties"],
@@ -381,14 +404,20 @@ export const api = createApi({
       query: () => `notifications/messages`,
       providesTags: (result) =>
         result
-          ? result.map((msg) => ({ type: "Notifications" as const, id: msg.id }))
+          ? result.map((msg) => ({
+              type: "Notifications" as const,
+              id: msg.id,
+            }))
           : [],
     }),
     getUserAlerts: build.query<Notification[], void>({
       query: () => `notifications/alerts`,
       providesTags: (result) =>
         result
-          ? result.map((alert) => ({ type: "Notifications" as const, id: alert.id }))
+          ? result.map((alert) => ({
+              type: "Notifications" as const,
+              id: alert.id,
+            }))
           : [],
     }),
 
@@ -496,6 +525,7 @@ export const {
   useGetPropertyQuery,
   useGetPropertyGrowthPerDayQuery,
   useGetPropertyCountsByTypeQuery,
+  useSuspendTenantMutation,
   useCreatePropertyMutation,
   useGetTenantQuery,
   useGetUserMessagesQuery,
