@@ -44,6 +44,7 @@ const AppSidebar = ({ userType }: AppSidebarProps) => {
            { icon: Send, label: "Emails", href: "/managers/emails" },
         ]
       : [
+          { icon: Home, label: "Dashboard", href: "/tenants/dashboard" },
           { icon: Heart, label: "Favorites", href: "/tenants/favorites" },
           {
             icon: FileText,

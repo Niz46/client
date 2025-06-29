@@ -3,12 +3,19 @@
 
 import React from "react";
 import Header from "@/components/Header";
+import { useState } from "react";
 import Loading from "@/components/Loading";
-import { useGetAllTenantsQuery, useSuspendTenantMutation } from "@/state/api";
+import {
+  useGetAllTenantsQuery,
+  useSuspendTenantMutation,
+  useFundTenantMutation,
+} from "@/state/api";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function AllUsersPage() {
   const {
@@ -19,6 +26,21 @@ export default function AllUsersPage() {
   } = useGetAllTenantsQuery();
 
   const [updateTenant, { isLoading: isUpdating }] = useSuspendTenantMutation();
+  const [fundTenant] = useFundTenantMutation();
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<string>();
+  const [amount, setAmount] = useState<number>(0);
+
+  const handleOpen = (cognitoId: string) => {
+    setSelected(cognitoId);
+    setOpen(true);
+  };
+  const handleFund = async () => {
+    if (selected && amount > 0) {
+      await fundTenant({ cognitoId: selected, amount }).unwrap();
+      setOpen(false);
+    }
+  };
 
   const handleToggleSuspend = async (u: (typeof users)[0]) => {
     const newSuspended = !u.isSuspended;
@@ -82,11 +104,14 @@ export default function AllUsersPage() {
                   <td className="px-6 py-4 text-gray-700">{u.email}</td>
                   {/* Actions */}
                   <td className="px-6 py-4">
+                    <Button onClick={() => handleOpen(u.cognitoId)}>
+                      Add Funds
+                    </Button>
                     <Button
                       disabled={isUpdating}
                       onClick={() => handleToggleSuspend(u)}
                       className={cn(
-                        "inline-flex items-center justify-center px-3 py-1 rounded-md text-sm font-medium transition",
+                        "inline-flex items-center justify-center ml-7 px-3 py-1 rounded-md text-sm font-medium transition",
                         u.isSuspended
                           ? "bg-green-100 text-green-700 hover:bg-green-200"
                           : "bg-red-100   text-red-700   hover:bg-red-200"
@@ -107,6 +132,22 @@ export default function AllUsersPage() {
             )}
           </tbody>
         </table>
+
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent>
+            <DialogTitle>Fund Tenant</DialogTitle>
+            <Input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(+e.target.value)}
+              placeholder="Amount"
+              className="w-full border px-2 py-1 rounded"
+            />
+            <div className="mt-4 flex justify-end">
+              <Button onClick={handleFund}>Confirm</Button>
+            </div>{" "}
+          </DialogContent>{" "}
+        </Dialog>
       </div>
 
       {/* ── CARD VIEW FOR sm ───────────────────────────────────────────── */}

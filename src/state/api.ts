@@ -142,6 +142,79 @@ export const api = createApi({
       },
     }),
 
+    createDepositRequest: build.mutation<
+      Payment,
+      { leaseId: number; amount: number }
+    >({
+      query: (body) => ({
+        url: "payments/deposit-request",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [
+        { type: "Payments" as const, id: "LIST" },
+        { type: "Tenants" as const, id: "LIST" },
+      ],
+    }),
+    getPendingDeposits: build.query<Payment[], void>({
+      query: () => "payments/deposits/pending",
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map((p) => ({ type: "Payments" as const, id: p.id })),
+              { type: "Payments", id: "LIST" },
+            ]
+          : [{ type: "Payments", id: "LIST" }],
+    }),
+    approveDeposit: build.mutation<{ success: boolean }, { id: number }>({
+      query: ({ id }) => ({
+        url: `payments/deposits/${id}/approve`,
+        method: "PUT",
+      }),
+      invalidatesTags: [
+        { type: "Payments" as const, id: "LIST" },
+        { type: "Tenants" as const, id: "LIST" },
+      ],
+    }),
+    declineDeposit: build.mutation<{ success: boolean }, { id: number }>({
+      query: ({ id }) => ({
+        url: `payments/deposits/${id}/decline`,
+        method: "PUT",
+      }),
+      invalidatesTags: [{ type: "Payments" as const, id: "LIST" }],
+    }),
+
+    // Withdraw
+    withdrawFunds: build.mutation<
+      { success: boolean },
+      { amount: number; destinationType: string; destinationDetails: string }
+    >({
+      query: ({ amount, destinationType, destinationDetails }) => ({
+        url: `payments/withdraw`,
+        method: "POST",
+        body: { amount, destinationType, destinationDetails },
+      }),
+      invalidatesTags: [
+        { type: "Payments", id: "LIST" },
+        { type: "Tenants", id: "LIST" },
+      ],
+    }),
+    // Fund tenant (manager)
+    fundTenant: build.mutation<
+      { success: boolean },
+      { cognitoId: string; amount: number }
+    >({
+      query: ({ cognitoId, amount }) => ({
+        url: `payments/tenants/${cognitoId}/fund`,
+        method: "POST",
+        body: { amount },
+      }),
+      invalidatesTags: [
+        { type: "Payments", id: "LIST" },
+        { type: "Tenants", id: "LIST" },
+      ],
+    }),
+
     /* Tenant Endpoints */
     getTenant: build.query<Tenant, string>({
       query: (cognitoId) => `tenants/${cognitoId}`,
@@ -525,12 +598,18 @@ export const {
   useGetPropertyQuery,
   useGetPropertyGrowthPerDayQuery,
   useGetPropertyCountsByTypeQuery,
+  useGetPendingDepositsQuery,
   useSuspendTenantMutation,
   useCreatePropertyMutation,
+  useCreateDepositRequestMutation,
   useGetTenantQuery,
   useGetUserMessagesQuery,
   useGetUserAlertsQuery,
   useUpdateTenantSettingsMutation,
+  useApproveDepositMutation,
+  useDeclineDepositMutation,
+  useWithdrawFundsMutation,
+  useFundTenantMutation,
   useAddFavoritePropertyMutation,
   useRemoveFavoritePropertyMutation,
   useGetCurrentResidencesQuery,
