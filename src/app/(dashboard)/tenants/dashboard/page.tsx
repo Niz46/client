@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { skipToken } from "@reduxjs/toolkit/query/react";
 import {
   useGetAuthUserQuery,
@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
@@ -42,12 +43,15 @@ export default function TenantDashboard() {
   const [withdrawAmt, setWithdrawAmt] = useState<number>(0);
   const [withdrawMethod, setWithdrawMethod] = useState<string>("");
   const [destinationDetails, setDestinationDetails] = useState<string>("");
+  const [showNoLeaseDialog, setShowNoLeaseDialog] = useState<boolean>(false);
 
-  // Guards
-  if (authLoading) return <Loading />;
-  if (!auth?.userInfo) {
-    return <p className="p-6 text-red-600">Unable to load your account.</p>;
-  }
+  // Effect to auto-close the “no lease” dialog after 12s
+  useEffect(() => {
+    if (showNoLeaseDialog) {
+      const timer = setTimeout(() => setShowNoLeaseDialog(false), 12_000);
+      return () => clearTimeout(timer);
+    }
+  }, [showNoLeaseDialog]);
 
   const balance = auth.userInfo.balance ?? 0;
   const totalTransactions = payments.length;
@@ -56,10 +60,18 @@ export default function TenantDashboard() {
     (p) => p.type === "DEPOSIT" && !p.approved
   ).length;
 
+  // Guards
+  if (authLoading) return <Loading />;
+  if (!auth?.userInfo) {
+    return <p className="p-6 text-red-600">Unable to load your account.</p>;
+  }
+
   // Handlers
 
   const handleDeposit = async () => {
-    if (!leaseId) return;
+    if (!leaseId) {
+      return;
+    }
     try {
       await createDeposit({ leaseId, amount: depositAmt }).unwrap();
       toast.success("Deposit request submitted");
@@ -150,20 +162,42 @@ export default function TenantDashboard() {
                 Cancel
               </Button>
               <Button
+                className="mb-4"
                 disabled={depositAmt <= 0 || depositLoading}
-                onClick={() => {
-                  if (!leaseId) {
-                    toast(
-                      "You don’t have an active lease to apply this deposit to—please contact support."
-                    );
-                    return;
-                  }
-                  handleDeposit();
-                }}
+                onClick={handleDeposit}
               >
                 Confirm
               </Button>
             </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        {/* ── No‑Lease Info Dialog ───────────────────────────────────────── */}
+        <Dialog open={showNoLeaseDialog} onOpenChange={() => {}}>
+          <DialogContent className="bg-white max-w-md mx-auto">
+            <DialogHeader>
+              <DialogTitle>Oops—No Active Lease</DialogTitle>
+            </DialogHeader>
+            <div className="px-4 pb-4 space-y-4 text-center">
+              <p>
+                It looks like you don’t have an active lease on file yet, so we
+                can’t process a deposit. To get one:
+              </p>
+              <ul className="list-disc list-inside text-left">
+                <li>
+                  Browse properties in the app and submit an application for the
+                  one you like.
+                </li>
+                <li>
+                  Once your application is approved, we’ll set up a lease and
+                  you can come back to make your deposit here.
+                </li>
+                <li>
+                  If you have questions, open the live chat (bottom‑right) and
+                  our support team can help.
+                </li>
+              </ul>
+              <p>This message will close automatically in 12 seconds.</p>
+            </div>
           </DialogContent>
         </Dialog>
 
@@ -183,7 +217,10 @@ export default function TenantDashboard() {
             <div className="mt-4 space-y-4">
               {/* Method */}
               <div>
-                <label htmlFor="withdraw-method" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="withdraw-method"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Destination
                 </label>
                 <select
@@ -275,10 +312,7 @@ export default function TenantDashboard() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
                 {payments.map((p) => (
-                  <tr
-                    key={p.id}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
+                  <tr key={p.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {p.type}
                     </td>

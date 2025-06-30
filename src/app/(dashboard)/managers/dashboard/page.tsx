@@ -23,14 +23,10 @@ export default function UnifiedDashboard() {
   const { data: tenants = [], isLoading: tenantsLoading } =
     useGetAllTenantsQuery();
   const managerId = authUser?.cognitoInfo?.userId ?? "";
-  const {
-    data: properties = [],
-    isLoading: propertiesLoading,
-  } = useGetManagerPropertiesQuery(managerId, { skip: !managerId });
-  const {
-    data: applications = [],
-    isLoading: applicationsLoading,
-  } = useGetApplicationsQuery({});
+  const { data: properties = [], isLoading: propertiesLoading } =
+    useGetManagerPropertiesQuery(managerId, { skip: !managerId });
+  const { data: applications = [], isLoading: applicationsLoading } =
+    useGetApplicationsQuery({});
 
   // — MANAGER‑SPECIFIC DATA & MUTATIONS —
   const { data: deposits = [], isLoading: depositsLoading } =
@@ -58,13 +54,11 @@ export default function UnifiedDashboard() {
   const totalUsers = tenants.length;
   const totalProperties = properties.length;
   const totalApplications = applications.length;
-  const statusCounts = applications.reduce<Record<string, number>>(
-    (acc, a) => {
-      acc[a.status] = (acc[a.status] || 0) + 1;
-      return acc;
-    },
-    {}
-  );
+  const totalBalances = tenants.reduce((sum, t) => sum + (t.balance ?? 0), 0);
+  const statusCounts = applications.reduce<Record<string, number>>((acc, a) => {
+    acc[a.status] = (acc[a.status] || 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <main className="min-h-screen bg-gray-50 p-6 md:p-8 space-y-12">
@@ -74,6 +68,12 @@ export default function UnifiedDashboard() {
 
       {/* ─── STATS CARDS ─── */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <StatsCard
+          headerTitle="Total Balances (USD)"
+          total={parseFloat(totalBalances.toFixed(2))}
+          currentMonthCount={0}
+          lastMonthCount={0}
+        />
         <StatsCard
           headerTitle="Total Users"
           total={totalUsers}
@@ -177,10 +177,7 @@ export default function UnifiedDashboard() {
               ))}
               {!properties.length && (
                 <tr>
-                  <td
-                    colSpan={4}
-                    className="py-6 text-center text-gray-500"
-                  >
+                  <td colSpan={4} className="py-6 text-center text-gray-500">
                     No properties found.
                   </td>
                 </tr>
@@ -219,18 +216,14 @@ export default function UnifiedDashboard() {
         ) : (
           <ul className="divide-y">
             {deposits.map((d) => (
-              <li
-                key={d.id}
-                className="py-3 flex justify-between items-center"
-              >
+              <li key={d.id} className="py-3 flex justify-between items-center">
                 <div>
                   <p>
                     Tenant: <strong>{d.lease.tenant.name}</strong> ($
                     {d.amountDue.toFixed(2)})
                   </p>
                   <p className="text-sm text-gray-500">
-                    Date:{" "}
-                    {new Date(d.paymentDate).toLocaleDateString()}
+                    Date: {new Date(d.paymentDate).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="flex gap-2">

@@ -52,7 +52,7 @@ const ApplicationModal = ({
       const timer = setTimeout(() => {
         setShowSuccess(false);
         onClose();
-      }, 20000);
+      }, 12000);
       return () => clearTimeout(timer);
     }
   }, [showSuccess, onClose]);
@@ -164,7 +164,7 @@ const ApplicationModal = ({
               review. To complete your transaction, please add this property to
               your Favorites and follow the payment instructions provided there.
             </p>
-            <p>This message will automatically close in 20 seconds.</p>
+            <p>This message will automatically close in 12 seconds.</p>
           </div>
         </DialogContent>
       </Dialog>
