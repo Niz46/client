@@ -3,9 +3,12 @@ export {};
 
 declare global {
   interface Window {
-    _smartsupp?: { key?: string; _: any[] };
-    smartsupp?: unknown;
+    // Google Translate helper (if you use it)
     googleTranslateElementInit?: () => void;
+
+    // Tawk.to globals (moved here from the component)
+    Tawk_API?: any;
+    Tawk_LoadStart?: Date | number;
   }
 }
 

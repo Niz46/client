@@ -4,7 +4,7 @@ import "./globals.css";
 import Providers from "./providers";
 import { Toaster } from "@/components/ui/sonner";
 import GoogleTranslator from "@/components/GoogleTranslator";
-import SmartsuappChat from "@/components/SmartusappChat";
+import TawkChat from "@/components/SmartusappChat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +38,7 @@ export default function RootLayout({
 
         {/* Third-party widgets */}
         <GoogleTranslator />
-        <SmartsuappChat />
+        <TawkChat />
       </body>
     </html>
   );
